@@ -68,6 +68,10 @@ html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
 .kpi-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.07);color:var(--accent);font-size:18px}
 .kpi-value{color:#f8fbff;font-size:30px;font-weight:800;letter-spacing:-.8px;margin-top:12px;line-height:1.1}
 .kpi-foot{color:#8196b2;font-size:11px;margin-top:7px}
+[data-testid="stPlotlyChart"] { min-width: 0; }
+[data-testid="stPlotlyChart"] .js-plotly-plot { width: 100% !important; }
+[data-testid="stPlotlyChart"] .plot-container { border-radius: 14px; }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color: #9FB2CA; }
 div[data-testid="stPlotlyChart"]{background:linear-gradient(145deg,rgba(18,31,52,.96),rgba(9,17,31,.99));border:1px solid rgba(125,211,252,.16);border-radius:20px;padding:12px 12px 6px;box-shadow:0 16px 36px rgba(0,0,0,.24);transition:border-color .2s ease}\ndiv[data-testid="stPlotlyChart"]:hover{border-color:rgba(45,212,191,.38)}
 div[data-testid="stDataFrame"]{border:1px solid rgba(148,163,184,.16);border-radius:14px}
 .insight{background:linear-gradient(100deg,rgba(20,184,166,.12),rgba(30,64,175,.12));border:1px solid rgba(94,234,212,.18);border-left:3px solid #2dd4bf;border-radius:12px;padding:14px 17px;margin:10px 0;color:#dce9f8;font-size:13px}
@@ -342,18 +346,52 @@ with left:
     origin_counts["origin_label"] = origin_counts["origin"].replace(
         {"unknown": "Unknown / Unattributed"}
     ).str.replace("_", " ").str.title()
+    donut_total = int(origin_counts["leads"].sum())
+    # Keep labels readable: tiny slices stay in the legend and hover tooltip.
+    donut_labels = [
+        f"{value / donut_total:.1%}" if donut_total and value / donut_total >= 0.055 else ""
+        for value in origin_counts["leads"]
+    ]
     donut_fig = px.pie(
-        origin_counts, names="origin_label", values="leads", hole=0.62,
-        color_discrete_sequence=px.colors.qualitative.Set2
+        origin_counts, names="origin_label", values="leads", hole=0.66,
+        color_discrete_sequence=[
+            "#38BDF8", "#2DD4BF", "#A78BFA", "#F59E0B",
+            "#FB7185", "#60A5FA", "#34D399", "#C084FC",
+            "#F97316", "#94A3B8"
+        ]
     )
     donut_fig.update_traces(
-        textposition="inside", textinfo="percent",
+        text=donut_labels,
+        texttemplate="%{text}",
+        textposition="inside",
+        insidetextorientation="horizontal",
+        textfont=dict(size=11, color="#F8FAFC", family="Manrope"),
+        marker=dict(line=dict(color="#0B1426", width=3)),
         hovertemplate="<b>%{label}</b><br>Leads: %{value:,}<br>Share: %{percent}<extra></extra>"
     )
     donut_fig.update_layout(
-        template="plotly_dark", height=390, margin=dict(l=10, r=10, t=20, b=10),
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        legend=dict(orientation="h", y=-0.12, font=dict(size=10))
+        template="plotly_dark",
+        height=430,
+        margin=dict(l=8, r=8, t=12, b=82),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=True,
+        legend=dict(
+            orientation="h", y=-0.19, x=0.5, xanchor="center",
+            yanchor="top", font=dict(size=9, color="#B8C9DF"),
+            bgcolor="rgba(0,0,0,0)", itemwidth=85
+        ),
+        uniformtext_minsize=10,
+        uniformtext_mode="hide",
+        annotations=[
+            dict(
+                text=f"<b>{donut_total:,}</b><br><span style='font-size:11px;color:#91A5C0'>TOTAL LEADS</span>",
+                x=0.5, y=0.53, xref="paper", yref="paper",
+                showarrow=False,
+                font=dict(size=23, color="#F8FBFF", family="Manrope"),
+                align="center"
+            )
+        ]
     )
     st.plotly_chart(donut_fig, use_container_width=True)
 
