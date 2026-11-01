@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="Marketing Funnel Dashboard",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ------------------------------------------
@@ -34,7 +34,13 @@ html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
 }
 [data-testid="stHeader"]{background:rgba(5,9,20,.72)}
 [data-testid="stSidebar"]{background:linear-gradient(180deg,#080f1d,#0d1729);border-right:1px solid rgba(148,163,184,.14)}
-[data-testid="stSidebar"] *{color:#d9e6f7}\n[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important}\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px;font-weight:700;color:#b8c9df}\n[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}
+[data-testid="stSidebar"] *{color:#d9e6f7}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important;color:#f3f7ff!important}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] strong{font-size:11px;letter-spacing:1px;color:#5eead4!important}
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px!important;font-weight:700!important;color:#b8c9df!important}
+[data-testid="stSidebar"] [data-testid="stSelectbox"] [data-baseweb="select"]>div,
+[data-testid="stSidebar"] [data-testid="stDateInput"] input{background:#111e32!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:9px!important;color:#edf5ff!important;min-height:40px}
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}\n[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important}\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px;font-weight:700;color:#b8c9df}\n[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}
 .main .block-container{max-width:1500px;padding:2rem 2.5rem 3rem}
 .filter-heading{margin:5px 0 12px}
 .filter-title{font-size:18px;font-weight:800;color:#f3f7ff;letter-spacing:-.3px}
@@ -149,51 +155,48 @@ if not valid_dates.empty:
 else:
     min_date = max_date = pd.Timestamp.today().date()
 
-st.markdown("""
-<div class="filter-heading">
-  <div class="filter-title">Explore the data</div>
-  <div class="filter-subtitle">Use the filters to focus on a marketing source, time period or customer profile.</div>
-</div>
-""", unsafe_allow_html=True)
+st.sidebar.markdown("## Dashboard Filters")
+st.sidebar.caption("Refine the dashboard using the options below.")
+st.sidebar.markdown("---")
 
-with st.container(border=True):
-    filter_cols = st.columns([1.05, 1.35, 1.15, 1.05, 1.05])
-    with filter_cols[0]:
-        selected_origin = st.selectbox(
-            "Marketing origin",
-            options=["All"] + origin_options,
-            format_func=lambda x: "All origins" if x == "All" else ("Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title()),
-            key="filter_origin"
-        )
-    with filter_cols[1]:
-        selected_dates = st.date_input(
-            "First contact period",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date,
-            key="filter_contact_date"
-        )
-    with filter_cols[2]:
-        selected_segment = st.selectbox(
-            "Business segment",
-            options=["All"] + segment_options,
-            format_func=lambda x: "All segments" if x == "All" else x.replace("_", " ").title(),
-            key="filter_segment"
-        )
-    with filter_cols[3]:
-        selected_lead_type = st.selectbox(
-            "Lead type",
-            options=["All"] + lead_type_options,
-            format_func=lambda x: "All lead types" if x == "All" else x.replace("_", " ").title(),
-            key="filter_lead_type"
-        )
-    with filter_cols[4]:
-        selected_business_type = st.selectbox(
-            "Business type",
-            options=["All"] + business_type_options,
-            format_func=lambda x: "All business types" if x == "All" else x.replace("_", " ").title(),
-            key="filter_business_type"
-        )
+st.sidebar.markdown("**LEAD ACQUISITION**")
+selected_origin = st.sidebar.selectbox(
+    "Marketing origin",
+    options=["All"] + origin_options,
+    format_func=lambda x: "All origins" if x == "All" else ("Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title()),
+    key="filter_origin"
+)
+selected_dates = st.sidebar.date_input(
+    "First contact period",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date,
+    key="filter_contact_date"
+)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("**CUSTOMER PROFILE**")
+selected_segment = st.sidebar.selectbox(
+    "Business segment",
+    options=["All"] + segment_options,
+    format_func=lambda x: "All segments" if x == "All" else x.replace("_", " ").title(),
+    key="filter_segment",
+    help="Applies to closed-deal analysis."
+)
+selected_lead_type = st.sidebar.selectbox(
+    "Lead type",
+    options=["All"] + lead_type_options,
+    format_func=lambda x: "All lead types" if x == "All" else x.replace("_", " ").title(),
+    key="filter_lead_type"
+)
+selected_business_type = st.sidebar.selectbox(
+    "Business type",
+    options=["All"] + business_type_options,
+    format_func=lambda x: "All business types" if x == "All" else x.replace("_", " ").title(),
+    key="filter_business_type"
+)
+st.sidebar.markdown("---")
+st.sidebar.caption("All filters update the dashboard automatically.")
 
 # Lead-level filters determine the funnel and overall KPIs.
 filtered_mql = mql.copy()
