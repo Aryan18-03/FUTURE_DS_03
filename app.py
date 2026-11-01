@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="Marketing Funnel Dashboard",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ------------------------------------------
@@ -34,7 +34,7 @@ html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
 }
 [data-testid="stHeader"]{background:rgba(5,9,20,.72)}
 [data-testid="stSidebar"]{background:linear-gradient(180deg,#080f1d,#0d1729);border-right:1px solid rgba(148,163,184,.14)}
-[data-testid="stSidebar"] *{color:#d9e6f7}
+[data-testid="stSidebar"] *{color:#d9e6f7}\n[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important}\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px;font-weight:700;color:#b8c9df}\n[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}
 .main .block-container{max-width:1500px;padding:2rem 2.5rem 3rem}
 .hero{position:relative;overflow:hidden;padding:36px 40px;border-radius:24px;
  background:linear-gradient(115deg,rgba(13,148,136,.24),rgba(30,64,175,.25) 48%,rgba(109,40,217,.27)),linear-gradient(135deg,#111d33,#10182b);
@@ -42,8 +42,8 @@ html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
 .hero:after{content:"";position:absolute;width:250px;height:250px;border-radius:50%;right:-70px;top:-130px;background:rgba(45,212,191,.16);filter:blur(8px)}
 .hero-kicker{color:#5eead4;font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;margin-bottom:12px}
 .hero h1{color:#f8fbff;font-size:clamp(27px,3vw,39px);line-height:1.15;font-weight:800;margin:0 0 11px;letter-spacing:-1.2px}
-.hero p{color:#b8c9df;font-size:14px;margin:0;max-width:760px}
-.section-heading{color:#f3f7ff;font-size:19px;font-weight:800;margin:25px 0 10px;letter-spacing:-.3px}
+.hero p{color:#b8c9df;font-size:14px;margin:0;max-width:760px;line-height:1.7}\n.hero-tag{display:inline-block;margin-top:20px;padding:7px 12px;border-radius:999px;background:rgba(45,212,191,.1);border:1px solid rgba(94,234,212,.25);color:#99f6e4;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.section-heading{color:#f3f7ff;font-size:19px;font-weight:800;margin:30px 0 12px;letter-spacing:-.3px;padding-left:13px;border-left:3px solid #2dd4bf;text-shadow:0 2px 18px rgba(45,212,191,.12)}
 .section-note{color:#91a5c0;font-size:12px;margin-top:-4px;margin-bottom:14px}
 .kpi-card{position:relative;overflow:hidden;min-height:132px;padding:19px 20px 17px;border-radius:18px;
  background:linear-gradient(145deg,rgba(23,38,62,.98),rgba(12,22,39,.98));border:1px solid rgba(148,163,184,.2);box-shadow:0 12px 30px rgba(0,0,0,.23)}
@@ -52,10 +52,10 @@ html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
 .kpi-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.07);color:var(--accent);font-size:18px}
 .kpi-value{color:#f8fbff;font-size:30px;font-weight:800;letter-spacing:-.8px;margin-top:12px;line-height:1.1}
 .kpi-foot{color:#8196b2;font-size:11px;margin-top:7px}
-div[data-testid="stPlotlyChart"]{background:linear-gradient(145deg,rgba(18,31,52,.94),rgba(11,20,36,.98));border:1px solid rgba(148,163,184,.17);border-radius:18px;padding:10px 10px 4px;box-shadow:0 12px 28px rgba(0,0,0,.2)}
+div[data-testid="stPlotlyChart"]{background:linear-gradient(145deg,rgba(18,31,52,.96),rgba(9,17,31,.99));border:1px solid rgba(125,211,252,.16);border-radius:20px;padding:12px 12px 6px;box-shadow:0 16px 36px rgba(0,0,0,.24);transition:border-color .2s ease}\ndiv[data-testid="stPlotlyChart"]:hover{border-color:rgba(45,212,191,.38)}
 div[data-testid="stDataFrame"]{border:1px solid rgba(148,163,184,.16);border-radius:14px}
 .insight{background:linear-gradient(100deg,rgba(20,184,166,.12),rgba(30,64,175,.12));border:1px solid rgba(94,234,212,.18);border-left:3px solid #2dd4bf;border-radius:12px;padding:14px 17px;margin:10px 0;color:#dce9f8;font-size:13px}
-.footer{color:#7186a2;font-size:11px;text-align:center;padding-top:30px}
+.footer{color:#8196b2;font-size:11px;text-align:center;padding:24px 12px;margin-top:30px;border-top:1px solid rgba(148,163,184,.14)}
 h2,h3{color:#f3f7ff!important}
 .stCaption,[data-testid="stCaptionContainer"]{color:#91a5c0!important}
 hr{border-color:rgba(148,163,184,.14)}
@@ -113,7 +113,7 @@ merged["conversion_status"] = np.where(
 )
 
 # ------------------------------------------
-# VISIBLE DASHBOARD FILTER BAR
+# SIDEBAR FILTERS
 # ------------------------------------------
 origin_options = sorted(mql["origin"].dropna().unique().tolist())
 segment_options = sorted(deals["business_segment"].dropna().unique().tolist())
@@ -126,37 +126,42 @@ if not valid_dates.empty:
 else:
     min_date = max_date = pd.Timestamp.today().date()
 
-st.markdown('<div class="section-heading">Explore the data</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-note">Use the filters below to focus the dashboard. Segment and lead type apply to closed-deal charts.</div>', unsafe_allow_html=True)
+st.sidebar.markdown("## ◈ Dashboard Controls")
+st.sidebar.caption("Refine the data displayed across the dashboard.")
+st.sidebar.markdown("---")
 
-with st.container(border=True):
-    filter_cols = st.columns([1.15, 1.55, 1.15, 1.15])
-    with filter_cols[0]:
-        selected_origins = st.multiselect(
-            "Marketing origin",
-            options=origin_options,
-            default=origin_options,
-            format_func=lambda x: "Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title()
-        )
-    with filter_cols[1]:
-        selected_dates = st.date_input(
-            "First contact date",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date
-        )
-    with filter_cols[2]:
-        selected_segments = st.multiselect(
-            "Business segment",
-            options=segment_options,
-            default=segment_options
-        )
-    with filter_cols[3]:
-        selected_lead_types = st.multiselect(
-            "Lead type",
-            options=lead_type_options,
-            default=lead_type_options
-        )
+st.sidebar.markdown("**LEAD SOURCE & DATE**")
+selected_origins = st.sidebar.multiselect(
+    "Marketing origin",
+    options=origin_options,
+    default=origin_options,
+    format_func=lambda x: "Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title(),
+    key="filter_origin"
+)
+selected_dates = st.sidebar.date_input(
+    "First contact date",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date,
+    key="filter_contact_date"
+)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("**CLOSED DEAL DETAILS**")
+selected_segments = st.sidebar.multiselect(
+    "Business segment",
+    options=segment_options,
+    default=segment_options,
+    key="filter_segment"
+)
+selected_lead_types = st.sidebar.multiselect(
+    "Lead type",
+    options=lead_type_options,
+    default=lead_type_options,
+    key="filter_lead_type"
+)
+st.sidebar.markdown("---")
+st.sidebar.caption("Tip: Select multiple values to compare groups. Segment and lead type filters affect closed-deal charts only.")
 
 # Lead-level filters determine the funnel and overall KPIs.
 filtered_mql = mql[mql["origin"].isin(selected_origins)].copy()
@@ -198,7 +203,7 @@ st.markdown("""
 <div class="hero">
     <div class="hero-kicker">Future Interns · Data Analytics · Task 03</div>
     <h1>Marketing Funnel & Conversion Performance</h1>
-    <p>Understand lead sources, conversion outcomes and the business profile of closed deals.</p>
+    <p>Explore lead acquisition, conversion outcomes and the business profile of closed deals through an interactive view of the Olist marketing funnel.</p>\n    <div class="hero-tag">INTERACTIVE ANALYTICS · LEAD ACQUISITION · CONVERSION INSIGHTS</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -224,7 +229,7 @@ for column, (label, value, symbol, foot, accent) in zip(kpi_columns, kpi_items):
         )
 
 st.markdown(
-    '<div class="section-note">Metrics update automatically when you change the filters.</div>',
+    '<div class="section-note">Live performance snapshot · Metrics update automatically when sidebar filters change.</div>',
     unsafe_allow_html=True
 )
 
