@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="Marketing Funnel Dashboard",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # ------------------------------------------
@@ -36,6 +36,16 @@ html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
 [data-testid="stSidebar"]{background:linear-gradient(180deg,#080f1d,#0d1729);border-right:1px solid rgba(148,163,184,.14)}
 [data-testid="stSidebar"] *{color:#d9e6f7}\n[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important}\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px;font-weight:700;color:#b8c9df}\n[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}
 .main .block-container{max-width:1500px;padding:2rem 2.5rem 3rem}
+.filter-heading{margin:5px 0 12px}
+.filter-title{font-size:18px;font-weight:800;color:#f3f7ff;letter-spacing:-.3px}
+.filter-subtitle{font-size:12px;color:#91a5c0;margin-top:4px}
+[data-testid="stVerticalBlockBorderWrapper"]:has([data-testid="stSelectbox"]){background:linear-gradient(145deg,rgba(18,31,52,.96),rgba(10,19,34,.98));border:1px solid rgba(94,234,212,.2)!important;border-radius:16px;padding:14px 16px}
+[data-testid="stSelectbox"] label,[data-testid="stDateInput"] label{font-size:11px!important;font-weight:700!important;color:#b8c9df!important}
+[data-testid="stSelectbox"] [data-baseweb="select"]>div,[data-testid="stDateInput"] input{background:#111e32!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:9px!important;color:#edf5ff!important;min-height:40px}
+[data-baseweb="popover"]{background:#111e32!important;border:1px solid rgba(94,234,212,.22)!important}
+[data-baseweb="menu"]{background:#111e32!important}
+[data-baseweb="menu"] li{color:#e5eefb!important}
+[data-baseweb="menu"] li:hover{background:#1b3048!important}
 .hero{position:relative;overflow:hidden;padding:36px 40px;border-radius:24px;
  background:linear-gradient(115deg,rgba(13,148,136,.24),rgba(30,64,175,.25) 48%,rgba(109,40,217,.27)),linear-gradient(135deg,#111d33,#10182b);
  border:1px solid rgba(125,211,252,.28);box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);margin-bottom:28px}
@@ -94,6 +104,8 @@ mql["origin"] = (
     mql["origin"].fillna("Unknown").astype(str).str.strip().str.lower()
 )
 deals["business_segment"] = deals["business_segment"].fillna("Unknown").astype(str)
+deals["lead_type"] = deals["lead_type"].fillna("Unknown").astype(str)
+deals["business_type"] = deals["business_type"].fillna("Unknown").astype(str)
 
 # Ensure numeric fields are usable in the scatter plot
 deals["declared_product_catalog_size"] = pd.to_numeric(
@@ -112,10 +124,12 @@ merged["conversion_status"] = np.where(
 )
 
 # ------------------------------------------
-# SIDEBAR FILTERS
+# PROFESSIONAL DASHBOARD FILTERS
 # ------------------------------------------
 origin_options = sorted(mql["origin"].dropna().unique().tolist())
 segment_options = sorted(deals["business_segment"].dropna().unique().tolist())
+lead_type_options = sorted(deals["lead_type"].dropna().unique().tolist())
+business_type_options = sorted(deals["business_type"].dropna().unique().tolist())
 
 valid_dates = mql["first_contact_date"].dropna()
 if not valid_dates.empty:
@@ -124,39 +138,57 @@ if not valid_dates.empty:
 else:
     min_date = max_date = pd.Timestamp.today().date()
 
-st.sidebar.markdown("## Dashboard Filters")
-st.sidebar.caption("Refine your analysis using the controls below.")
-st.sidebar.markdown("---")
+st.markdown("""
+<div class="filter-heading">
+  <div class="filter-title">Explore the data</div>
+  <div class="filter-subtitle">Use the filters to focus on a marketing source, time period or customer profile.</div>
+</div>
+""", unsafe_allow_html=True)
 
-st.sidebar.markdown("**LEAD ACQUISITION**")
-selected_origins = st.sidebar.multiselect(
-    "Marketing origin",
-    options=origin_options,
-    default=origin_options,
-    format_func=lambda x: "Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title(),
-    key="filter_origin"
-)
-selected_dates = st.sidebar.date_input(
-    "First contact date",
-    value=(min_date, max_date),
-    min_value=min_date,
-    max_value=max_date,
-    key="filter_contact_date"
-)
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("**CUSTOMER PROFILE**")
-selected_segments = st.sidebar.multiselect(
-    "Business segment",
-    options=segment_options,
-    default=segment_options,
-    key="filter_segment",
-    help="Applies to the closed-deal segment and revenue analysis."
-)
-st.sidebar.caption("Choose one or more values. The dashboard updates automatically.")
+with st.container(border=True):
+    filter_cols = st.columns([1.05, 1.35, 1.15, 1.05, 1.05])
+    with filter_cols[0]:
+        selected_origin = st.selectbox(
+            "Marketing origin",
+            options=["All"] + origin_options,
+            format_func=lambda x: "All origins" if x == "All" else ("Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title()),
+            key="filter_origin"
+        )
+    with filter_cols[1]:
+        selected_dates = st.date_input(
+            "First contact period",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date,
+            key="filter_contact_date"
+        )
+    with filter_cols[2]:
+        selected_segment = st.selectbox(
+            "Business segment",
+            options=["All"] + segment_options,
+            format_func=lambda x: "All segments" if x == "All" else x.replace("_", " ").title(),
+            key="filter_segment"
+        )
+    with filter_cols[3]:
+        selected_lead_type = st.selectbox(
+            "Lead type",
+            options=["All"] + lead_type_options,
+            format_func=lambda x: "All lead types" if x == "All" else x.replace("_", " ").title(),
+            key="filter_lead_type"
+        )
+    with filter_cols[4]:
+        selected_business_type = st.selectbox(
+            "Business type",
+            options=["All"] + business_type_options,
+            format_func=lambda x: "All business types" if x == "All" else x.replace("_", " ").title(),
+            key="filter_business_type"
+        )
 
 # Lead-level filters determine the funnel and overall KPIs.
-filtered_mql = mql[mql["origin"].isin(selected_origins)].copy()
+filtered_mql = mql.copy()
+if selected_origin != "All":
+    filtered_mql = filtered_mql[filtered_mql["origin"] == selected_origin]
+
 if isinstance(selected_dates, (tuple, list)) and len(selected_dates) == 2:
     start_date, end_date = selected_dates
     filtered_mql = filtered_mql[
@@ -170,22 +202,14 @@ elif isinstance(selected_dates, (tuple, list)) and len(selected_dates) == 1:
 filtered_ids = filtered_mql["mql_id"].dropna().unique()
 filtered = merged[merged["mql_id"].isin(filtered_ids)].copy()
 
-# Deal-level filters affect only charts based on closed-deal attributes.
-filtered_deals = deals[
-    deals["mql_id"].isin(filtered_ids)
-    & deals["business_segment"].isin(selected_segments)
-].copy()
-
-# ------------------------------------------
-# KPI CALCULATIONS
-# ------------------------------------------
-total_leads = filtered_mql["mql_id"].nunique()
-converted_leads = filtered.loc[
-    filtered["conversion_status"] == "Converted", "mql_id"
-].nunique()
-not_converted = max(total_leads - converted_leads, 0)
-conversion_rate = converted_leads / total_leads * 100 if total_leads else 0
-drop_off_rate = not_converted / total_leads * 100 if total_leads else 0
+# Deal-level filters apply only to charts based on closed-deal attributes.
+filtered_deals = deals[deals["mql_id"].isin(filtered_ids)].copy()
+if selected_segment != "All":
+    filtered_deals = filtered_deals[filtered_deals["business_segment"] == selected_segment]
+if selected_lead_type != "All":
+    filtered_deals = filtered_deals[filtered_deals["lead_type"] == selected_lead_type]
+if selected_business_type != "All":
+    filtered_deals = filtered_deals[filtered_deals["business_type"] == selected_business_type]
 
 # ------------------------------------------
 # HEADER
@@ -197,6 +221,17 @@ st.markdown("""
     <p>Explore lead acquisition, conversion outcomes and the business profile of closed deals through an interactive view of the Olist marketing funnel.</p>\n    <div class="hero-tag">INTERACTIVE ANALYTICS · LEAD ACQUISITION · CONVERSION INSIGHTS</div>
 </div>
 """, unsafe_allow_html=True)
+
+# ------------------------------------------
+# KPI CALCULATIONS
+# ------------------------------------------
+total_leads = filtered_mql["mql_id"].nunique()
+converted_leads = filtered.loc[
+    filtered["conversion_status"] == "Converted", "mql_id"
+].nunique()
+not_converted = max(total_leads - converted_leads, 0)
+conversion_rate = converted_leads / total_leads * 100 if total_leads else 0
+drop_off_rate = not_converted / total_leads * 100 if total_leads else 0
 
 # ------------------------------------------
 # KPI CARDS
