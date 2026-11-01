@@ -435,6 +435,7 @@ with left:
         template="plotly_dark",
         height=430,
         margin=dict(l=8, r=8, t=12, b=82),
+        autosize=True,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         showlegend=True,
@@ -447,11 +448,20 @@ with left:
         uniformtext_mode="hide",
         annotations=[
             dict(
-                text=f"<b>{donut_total:,}</b><br><span style='font-size:11px;color:#91A5C0'>TOTAL LEADS</span>",
-                x=0.5, y=0.53, xref="paper", yref="paper",
+                text=(
+                    f"<b style='font-size:27px;color:#FFFFFF'>{donut_total:,}</b>"
+                    "<br><span style='font-size:10px;color:#B8C9DF;"
+                    "letter-spacing:1.4px'>TOTAL LEADS</span>"
+                ),
+                x=0.5, y=0.5, xref="paper", yref="paper",
+                xanchor="center", yanchor="middle",
                 showarrow=False,
-                font=dict(size=23, color="#F8FBFF", family="Manrope"),
-                align="center"
+                align="center",
+                font=dict(size=14, color="#FFFFFF", family="Manrope"),
+                bgcolor="rgba(7,17,31,0.92)",
+                bordercolor="rgba(54,228,245,0.32)",
+                borderwidth=1,
+                borderpad=8
             )
         ]
     )
