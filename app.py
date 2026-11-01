@@ -24,111 +24,144 @@ st.set_page_config(
 # ------------------------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-:root { color-scheme: dark; }
-html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
+:root {
+    --bg: #07111F;
+    --panel: #0D1B2A;
+    --panel-2: #102338;
+    --line: #203A53;
+    --cyan: #36E4F5;
+    --blue: #4D8DFF;
+    --violet: #A78BFA;
+    --coral: #FF6B81;
+    --mint: #4DE2B1;
+    --text: #EAF4FF;
+    --muted: #91A9C2;
+}
 .stApp {
- background:radial-gradient(ellipse at 12% 0%,rgba(20,184,166,.16),transparent 34%),
- radial-gradient(ellipse at 88% 8%,rgba(139,92,246,.19),transparent 32%),
- linear-gradient(145deg,#050914 0%,#0a1020 48%,#0b1426 100%); color:#eef4ff;
+    background:
+      radial-gradient(ellipse at 12% 0%, rgba(54,228,245,.10), transparent 34%),
+      radial-gradient(ellipse at 88% 8%, rgba(167,139,250,.10), transparent 32%),
+      var(--bg);
+    color: var(--text);
 }
-[data-testid="stHeader"]{background:rgba(5,9,20,.72)}
-[data-testid="stSidebar"]{background:linear-gradient(180deg,#080f1d,#0d1729);border-right:1px solid rgba(148,163,184,.14)}
-[data-testid="stSidebar"] *{color:#d9e6f7}
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important;color:#f3f7ff!important}
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] strong{font-size:11px;letter-spacing:1px;color:#5eead4!important}
-[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px!important;font-weight:700!important;color:#b8c9df!important}
-[data-testid="stSidebar"] [data-testid="stSelectbox"] [data-baseweb="select"]>div,
-[data-testid="stSidebar"] [data-testid="stDateInput"] input{background:#111e32!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:9px!important;color:#edf5ff!important;min-height:40px}
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}\n[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2{font-size:19px!important;font-weight:800!important}\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p{font-size:12px;font-weight:700;color:#b8c9df}\n[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.65rem}
-.main .block-container{max-width:1500px;padding:2rem 2.5rem 3rem}
-.filter-heading{margin:5px 0 12px}
-.filter-title{font-size:18px;font-weight:800;color:#f3f7ff;letter-spacing:-.3px}
-.filter-subtitle{font-size:12px;color:#91a5c0;margin-top:4px}
-[data-testid="stVerticalBlockBorderWrapper"]:has([data-testid="stSelectbox"]){background:linear-gradient(145deg,rgba(18,31,52,.96),rgba(10,19,34,.98));border:1px solid rgba(94,234,212,.2)!important;border-radius:16px;padding:14px 16px}
-[data-testid="stSelectbox"] label,[data-testid="stDateInput"] label{font-size:11px!important;font-weight:700!important;color:#b8c9df!important}
-[data-testid="stSelectbox"] [data-baseweb="select"]>div,[data-testid="stDateInput"] input{background:#111e32!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:9px!important;color:#edf5ff!important;min-height:40px}
-[data-baseweb="popover"]{background:#111e32!important;border:1px solid rgba(94,234,212,.22)!important}
-[data-baseweb="menu"]{background:#111e32!important}
-[data-baseweb="menu"] li{color:#e5eefb!important}
-[data-baseweb="menu"] li:hover{background:#1b3048!important}
-.hero{position:relative;overflow:hidden;padding:36px 40px;border-radius:24px;
- background:linear-gradient(115deg,rgba(13,148,136,.24),rgba(30,64,175,.25) 48%,rgba(109,40,217,.27)),linear-gradient(135deg,#111d33,#10182b);
- border:1px solid rgba(125,211,252,.28);box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);margin-bottom:28px}
-.hero:after{content:"";position:absolute;width:250px;height:250px;border-radius:50%;right:-70px;top:-130px;background:rgba(45,212,191,.16);filter:blur(8px)}
-.hero-kicker{color:#5eead4;font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;margin-bottom:12px}
-.hero h1{color:#f8fbff;font-size:clamp(27px,3vw,39px);line-height:1.15;font-weight:800;margin:0 0 11px;letter-spacing:-1.2px}
-.hero p{color:#b8c9df;font-size:14px;margin:0;max-width:760px;line-height:1.7}\n.hero-tag{display:inline-block;margin-top:20px;padding:7px 12px;border-radius:999px;background:rgba(45,212,191,.1);border:1px solid rgba(94,234,212,.25);color:#99f6e4;font-size:10px;font-weight:800;letter-spacing:1.2px}
-.section-heading{color:#f3f7ff;font-size:19px;font-weight:800;margin:30px 0 12px;letter-spacing:-.3px;padding-left:13px;border-left:3px solid #2dd4bf;text-shadow:0 2px 18px rgba(45,212,191,.12)}
-.section-note{color:#91a5c0;font-size:12px;margin-top:-4px;margin-bottom:14px}
-.kpi-card{position:relative;overflow:hidden;min-height:132px;padding:19px 20px 17px;border-radius:18px;
- background:linear-gradient(145deg,rgba(23,38,62,.98),rgba(12,22,39,.98));border:1px solid rgba(148,163,184,.2);box-shadow:0 12px 30px rgba(0,0,0,.23)}
-.kpi-card:after{content:"";position:absolute;height:3px;left:0;right:0;top:0;background:var(--accent)}
-.kpi-top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#a8bbd3;font-size:11px;font-weight:800;letter-spacing:.5px}
-.kpi-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.07);color:var(--accent);font-size:18px}
-.kpi-value{color:#f8fbff;font-size:30px;font-weight:800;letter-spacing:-.8px;margin-top:12px;line-height:1.1}
-.kpi-foot{color:#8196b2;font-size:11px;margin-top:7px}
-[data-testid="stPlotlyChart"] { min-width: 0; }
-[data-testid="stPlotlyChart"] .js-plotly-plot { width: 100% !important; }
-[data-testid="stPlotlyChart"] .plot-container { border-radius: 14px; }
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color: #9FB2CA; }
-div[data-testid="stPlotlyChart"]{background:linear-gradient(145deg,rgba(18,31,52,.96),rgba(9,17,31,.99));border:1px solid rgba(125,211,252,.16);border-radius:20px;padding:12px 12px 6px;box-shadow:0 16px 36px rgba(0,0,0,.24);transition:border-color .2s ease}\ndiv[data-testid="stPlotlyChart"]:hover{border-color:rgba(45,212,191,.38)}
-div[data-testid="stDataFrame"]{border:1px solid rgba(148,163,184,.16);border-radius:14px}
-.insight{background:linear-gradient(100deg,rgba(20,184,166,.12),rgba(30,64,175,.12));border:1px solid rgba(94,234,212,.18);border-left:3px solid #2dd4bf;border-radius:12px;padding:14px 17px;margin:10px 0;color:#dce9f8;font-size:13px}
-.footer{color:#8196b2;font-size:11px;text-align:center;padding:24px 12px;margin-top:30px;border-top:1px solid rgba(148,163,184,.14)}
-h2,h3{color:#f3f7ff!important}
-.stCaption,[data-testid="stCaptionContainer"]{color:#91a5c0!important}
-hr{border-color:rgba(148,163,184,.14)}
-[data-testid="stVerticalBlockBorderWrapper"]{background:linear-gradient(145deg,rgba(18,31,52,.92),rgba(10,19,34,.96));border:1px solid rgba(94,234,212,.22)!important;border-radius:18px;padding:16px 18px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
-[data-testid="stSelectbox"],[data-testid="stMultiSelect"],[data-testid="stDateInput"]{background:rgba(255,255,255,.025);border-radius:10px}
-/* Refined dashboard controls and visual hierarchy */
-.stButton > button {
-    border: 1px solid rgba(94,234,212,.38);
-    border-radius: 11px;
-    color: #99f6e4;
-    background: linear-gradient(110deg,rgba(20,184,166,.13),rgba(59,130,246,.12));
-    font-weight: 800;
-    letter-spacing: .2px;
-    min-height: 42px;
-    transition: all .18s ease;
+[data-testid="stHeader"] { background: transparent !important; }
+[data-testid="stToolbar"], #MainMenu, footer { visibility: hidden !important; }
+.block-container { max-width: 1500px; padding: 1.5rem 2rem 2.5rem !important; }
+h1, h2, h3 { color: var(--text) !important; letter-spacing: -.025em; }
+h1 { font-weight: 800 !important; }
+p, label, .stMarkdown { color: var(--text); }
+[data-testid="stCaptionContainer"] { color: var(--muted) !important; }
+[data-testid="stSidebar"] {
+    background: radial-gradient(ellipse at 10% 0%, rgba(54,228,245,.12), transparent 38%),
+      linear-gradient(180deg, #0B1B2B 0%, #091522 100%);
+    border-right: 1px solid rgba(54,228,245,.22);
 }
-.stButton > button:hover {
-    border-color: rgba(94,234,212,.75);
-    color: #ecfeff;
-    background: linear-gradient(110deg,rgba(20,184,166,.25),rgba(59,130,246,.22));
-    transform: translateY(-1px);
+[data-testid="stSidebar"] * { color: var(--text); }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
+    color: #FFFFFF !important; font-size: 19px !important; font-weight: 800 !important;
 }
-[data-testid="stSidebar"] [data-testid="stButton"] { margin: 8px 0 2px; }
-[data-testid="stSidebar"] hr { margin: 12px 0 16px; border-color: rgba(148,163,184,.16); }
-/* Keep each Plotly chart viewport clean: prevent embedded chart overflow and hide its scrollbars. */
-[data-testid="stPlotlyChart"] {
-    width: 100% !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] strong,
+.sidebar-kicker {
+    color: var(--cyan) !important; font-size: .72rem; font-weight: 850; letter-spacing: .16em;
 }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+    color: #C8D9EC !important; font-size: .88rem;
+}
+[data-testid="stSidebar"] [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+[data-testid="stSidebar"] [data-testid="stDateInput"] input {
+    min-height: 42px !important; background: #102338 !important;
+    border: 1px solid #36536F !important; border-radius: 9px !important;
+    color: var(--text) !important;
+}
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .55rem; }
+[data-testid="stSidebar"] hr { border-color: var(--line); margin: .7rem 0; }
+[data-testid="stSidebar"] [data-testid="stButton"] button {
+    min-height: 44px; background: linear-gradient(100deg, rgba(54,228,245,.18), rgba(167,139,250,.18));
+    border: 1px solid rgba(54,228,245,.55); border-radius: 10px;
+    color: var(--text); font-weight: 700;
+}
+[data-testid="stSidebar"] [data-testid="stButton"] button:hover {
+    border-color: var(--cyan); color: var(--cyan);
+}
+.hero {
+    padding: 1.4rem 1.5rem; border: 1px solid rgba(54,228,245,.27);
+    border-radius: 18px;
+    background: linear-gradient(115deg, rgba(16,35,56,.96), rgba(12,24,42,.83));
+    margin-bottom: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.18);
+}
+.hero-kicker, .eyebrow {
+    color: var(--cyan); font-size: .76rem; font-weight: 800;
+    letter-spacing: .16em; text-transform: uppercase; margin-bottom: .55rem;
+}
+.hero h1 {
+    color: #F3F8FF !important; font-size: clamp(1.7rem, 3vw, 2.35rem) !important;
+    line-height: 1.2; margin: 0 0 .55rem; letter-spacing: -.04em;
+}
+.hero p, .hero-sub { color: var(--muted); font-size: .92rem; margin: 0; line-height: 1.6; }
+.hero-tag {
+    display: inline-block; margin-top: .9rem; padding: .4rem .7rem;
+    border-radius: 999px; background: rgba(54,228,245,.09);
+    border: 1px solid rgba(54,228,245,.28); color: #A5F3FC;
+    font-size: .68rem; font-weight: 800; letter-spacing: .1em;
+}
+.section-heading {
+    padding: .85rem 1.1rem .35rem; margin: 1.35rem 0 .65rem;
+    border-left: 3px solid var(--violet);
+    background: linear-gradient(100deg, rgba(54,228,245,.07), rgba(167,139,250,.08));
+    border-radius: 0 12px 12px 0; color: var(--text);
+    font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em;
+}
+.section-note { color: var(--muted); font-size: .83rem; margin: 0 0 .8rem; }
+.kpi-card {
+    min-height: 126px; height: 100%; padding: .9rem .95rem;
+    border: 1px solid rgba(77,141,255,.30); border-top: 3px solid var(--accent);
+    border-radius: 14px; background: linear-gradient(145deg, rgba(13,34,57,.98), rgba(5,19,36,.98));
+    box-shadow: 0 8px 24px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.035);
+}
+.kpi-top { display:flex; align-items:center; justify-content:space-between; gap:.55rem; min-height:30px; }
+.kpi-icon {
+    display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
+    border-radius:9px; background:rgba(255,255,255,.07); color:var(--accent); font-size:1.05rem;
+}
+.kpi-top span:first-child { color:#C8D9EC; font-size:.76rem; font-weight:750; line-height:1.2; }
+.kpi-value { color:#F3F8FF; font-size:1.65rem; font-weight:850; letter-spacing:-.04em; margin-top:.45rem; white-space:nowrap; }
+.kpi-foot { color:#8FAAC5; font-size:.70rem; margin-top:.12rem; }
+div[data-testid="stPlotlyChart"] {
+    background: rgba(13,27,42,.74); border: 1px solid var(--line);
+    border-radius: 15px; padding: .15rem; overflow: hidden !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.16); margin-bottom: .7rem;
+}
+[data-testid="stPlotlyChart"] { width:100% !important; min-width:0 !important; overflow:hidden !important; }
 [data-testid="stPlotlyChart"] iframe {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    border: 0 !important;
-    border-radius: 14px;
-    overflow: hidden !important;
-    scrollbar-width: none !important;
+    display:block !important; width:100% !important; max-width:100% !important;
+    border:0 !important; overflow:hidden !important; scrollbar-width:none !important;
 }
 [data-testid="stPlotlyChart"] iframe::-webkit-scrollbar,
-[data-testid="stPlotlyChart"]::-webkit-scrollbar,
-[data-testid="stPlotlyChart"] *::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
+[data-testid="stPlotlyChart"]::-webkit-scrollbar { display:none !important; width:0 !important; height:0 !important; }
+.insight, .insight-card {
+    padding: 1rem 1.05rem; border: 1px solid var(--line);
+    border-left: 3px solid var(--cyan); background: rgba(13,27,42,.82);
+    border-radius: 12px; margin: .65rem 0; color: #DCEBFA; font-size: .88rem; line-height: 1.6;
 }
-[data-testid="stMarkdownContainer"] p { line-height: 1.65; }
-[data-testid="stExpander"] {
-    border: 1px solid rgba(125,211,252,.18);
-    border-radius: 14px;
-    background: rgba(15,27,46,.72);
+.insight strong, .insight b, .insight-card strong { color: var(--cyan); }
+[data-testid="stExpander"] { border:1px solid var(--line); border-radius:12px; background:rgba(13,27,42,.72); }
+div[data-testid="stDataFrame"] { border:1px solid var(--line); border-radius:10px; }
+.stButton > button, .stDownloadButton > button {
+    border:1px solid rgba(54,228,245,.45);
+    background:linear-gradient(100deg, rgba(54,228,245,.14), rgba(77,141,255,.16));
+    color:var(--text); border-radius:10px; font-weight:650;
 }
-@media(max-width:800px){.main .block-container{padding:1rem}.hero{padding:24px 22px}.kpi-value{font-size:24px}}
+.stButton > button:hover, .stDownloadButton > button:hover { border-color:var(--cyan); color:var(--cyan); }
+hr { border-color:var(--line); }
+.footer { color:var(--muted); font-size:.78rem; text-align:center; padding:1.4rem .7rem; margin-top:1.5rem; border-top:1px solid var(--line); }
+@media (max-width: 768px) {
+    .block-container { padding:1rem .8rem 2rem !important; }
+    .hero { padding:1rem; }
+    .kpi-card { min-height:100px; }
+    .kpi-value { font-size:1.35rem; }
+    div[data-testid="stPlotlyChart"] { padding:0; }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -351,7 +384,7 @@ funnel_fig = go.Figure(go.Funnel(
     y=["Marketing Qualified Leads", "Closed Deals"],
     x=[total_leads, converted_leads],
     textinfo="value+percent initial",
-    marker={"color": ["#3b82f6", "#22c55e"]},
+    marker={"color": ["#4D8DFF", "#4DE2B1"]},
     connector={"line": {"color": "#58708d", "width": 1}}
 ))
 funnel_fig.update_layout(
@@ -384,9 +417,9 @@ with left:
     donut_fig = px.pie(
         origin_counts, names="origin_label", values="leads", hole=0.66,
         color_discrete_sequence=[
-            "#38BDF8", "#2DD4BF", "#A78BFA", "#F59E0B",
-            "#FB7185", "#60A5FA", "#34D399", "#C084FC",
-            "#F97316", "#94A3B8"
+            "#36E4F5", "#4D8DFF", "#A78BFA", "#4DE2B1",
+            "#FF6B81", "#60A5FA", "#9B8AFB", "#20B8A5",
+            "#F59E0B", "#91A9C2"
         ]
     )
     donut_fig.update_traces(
@@ -441,7 +474,7 @@ with right:
             monthly_leads, x="month", y="leads", markers=True,
             labels={"month": "Contact Month", "leads": "Marketing Leads"}
         )
-        monthly_fig.update_traces(line=dict(color="#60a5fa", width=3), marker=dict(size=7))
+        monthly_fig.update_traces(line=dict(color="#36E4F5", width=3), marker=dict(size=7))
         monthly_fig.update_layout(
             template="plotly_dark", height=390, margin=dict(l=15, r=15, t=20, b=35),
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
@@ -465,7 +498,7 @@ with left:
     if not segment_counts.empty:
         segment_fig = px.treemap(
             segment_counts, path=["business_segment"], values="closed_deals",
-            color="closed_deals", color_continuous_scale="Blues"
+            color="closed_deals", color_continuous_scale=["#102338", "#36E4F5"]
         )
         segment_fig.update_traces(
             texttemplate="%{label}<br>%{value:,} deals",
@@ -502,7 +535,7 @@ with right:
                 "declared_product_catalog_size": "Product Catalog Size",
                 "declared_monthly_revenue": "Declared Monthly Revenue"
             },
-            opacity=0.72, color_discrete_sequence=["#38bdf8"]
+            opacity=0.72, color_discrete_sequence=["#36E4F5"]
         )
         scatter_fig.update_yaxes(type="log", title="Monthly Revenue (log scale)")
         scatter_fig.update_layout(
