@@ -613,6 +613,101 @@ with st.expander("View filtered data and dataset details"):
         f"Filtered closed deals: {converted_leads:,}."
     )
 
+# ------------------------------------------
+# FINDINGS AND RECOMMENDATIONS
+# ------------------------------------------
+st.markdown('<div class="section-heading">Findings</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-note">Evidence-led observations from the currently selected filters.</div>',
+    unsafe_allow_html=True
+)
+
+finding_items = [
+    (
+        "Overall conversion",
+        f"{converted_leads:,} out of {total_leads:,} selected leads converted "
+        f"({conversion_rate:.2f}%). The remaining {not_converted:,} leads "
+        f"({drop_off_rate:.2f}%) did not appear as closed deals in this dataset."
+    )
+]
+
+if not known_channels.empty:
+    finding_items.append((
+        "Channel performance",
+        f"{best_rate['origin'].replace('_', ' ').title()} has the highest conversion rate "
+        f"among identified channels ({best_rate['conversion_rate']:.2f}%). "
+        f"{best_volume['origin'].replace('_', ' ').title()} contributes the largest "
+        f"number of closed deals ({int(best_volume['converted_leads']):,})."
+    ))
+
+if not segment_counts.empty:
+    leading_segment = segment_counts.iloc[0]
+    finding_items.append((
+        "Closed-deal profile",
+        f"{str(leading_segment['business_segment']).replace('_', ' ').title()} is the "
+        f"largest segment among the selected closed deals, with "
+        f"{int(leading_segment['closed_deals']):,} deals."
+    ))
+
+if unknown_count:
+    finding_items.append((
+        "Marketing attribution",
+        f"{unknown_count:,} selected leads have an unknown or missing marketing origin, "
+        "which limits the ability to attribute results to a specific channel."
+    ))
+
+for finding_title, finding_text in finding_items:
+    st.markdown(
+        f'<div class="insight"><b>{finding_title}:</b> {finding_text}</div>',
+        unsafe_allow_html=True
+    )
+
+st.markdown('<div class="section-heading">Recommendations</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-note">Practical next steps based on the findings above.</div>',
+    unsafe_allow_html=True
+)
+
+recommendation_items = [
+    (
+        "Improve lead nurturing",
+        "Review the follow-up journey for leads that have not converted. Test faster first responses, "
+        "scheduled follow-ups and clearer qualification steps.",
+        "Potential benefit: reduce lead drop-off and improve the share of leads progressing to a deal."
+    )
+]
+
+if not known_channels.empty:
+    recommendation_items.insert(0, (
+        "Optimize channel investment",
+        f"Run a controlled campaign test around {best_rate['origin'].replace('_', ' ').title()}, "
+        f"the strongest identified channel by conversion rate ({best_rate['conversion_rate']:.2f}%). "
+        f"Also study {best_volume['origin'].replace('_', ' ').title()} for its closed-deal volume.",
+        "Potential benefit: focus budget on channels with measurable conversion performance while validating results."
+    ))
+
+if unknown_count:
+    recommendation_items.append((
+        "Strengthen source tracking",
+        "Use consistent UTM parameters and required source fields across landing pages and campaign forms. "
+        "Audit records with missing or unknown origins.",
+        "Potential benefit: improve attribution quality and make channel comparisons more reliable."
+    ))
+
+recommendation_items.append((
+    "Monitor performance regularly",
+    "Track lead volume, closed deals, conversion rate and channel performance each month. "
+    "Compare results before and after campaign or follow-up changes.",
+    "Potential benefit: identify performance changes early and make decisions using evidence."
+))
+
+for recommendation_title, recommendation_text, benefit_text in recommendation_items:
+    st.markdown(
+        f'<div class="insight"><b>{recommendation_title}</b><br>{recommendation_text}'
+        f'<br><span style="color:#5eead4;font-size:12px;">{benefit_text}</span></div>',
+        unsafe_allow_html=True
+    )
+
 st.markdown(
     '<div class="footer">Data source: Olist Marketing Funnel public dataset on Kaggle · '
     'Analysis: Future Interns Task 3</div>',
