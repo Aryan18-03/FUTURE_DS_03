@@ -375,22 +375,79 @@ if total_leads == 0:
     st.stop()
 
 # ------------------------------------------
-# CHART 1: FUNNEL
+# CHART 1: LEAD FUNNEL & OUTCOME
 # ------------------------------------------
-st.markdown('<div class="section-heading">1. Lead Conversion Funnel</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-note">Shows how many marketing-qualified leads became closed deals.</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-heading">1. Lead Conversion Funnel & Outcome</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-note">The first bar shows all marketing-qualified leads. The next two bars split those leads into the two recorded outcomes: closed deals and leads without a matching closed-deal record.</div>',
+    unsafe_allow_html=True
+)
 
-funnel_fig = go.Figure(go.Funnel(
-    y=["Marketing Qualified Leads", "Closed Deals"],
-    x=[total_leads, converted_leads],
-    textinfo="value+percent initial",
-    marker={"color": ["#4D8DFF", "#4DE2B1"]},
-    connector={"line": {"color": "#58708d", "width": 1}}
-))
+funnel_data = pd.DataFrame({
+    "stage": ["Total Marketing Qualified Leads", "Closed Deals", "Not Converted"],
+    "leads": [total_leads, converted_leads, not_converted],
+    "share": [
+        100.0,
+        converted_leads / total_leads * 100 if total_leads else 0,
+        not_converted / total_leads * 100 if total_leads else 0
+    ],
+    "color": ["#4D8DFF", "#4DE2B1", "#FF6B81"]
+})
+
+funnel_fig = go.Figure()
+for _, row in funnel_data.iterrows():
+    funnel_fig.add_trace(go.Bar(
+        x=[row["leads"]],
+        y=[row["stage"]],
+        orientation="h",
+        name=row["stage"],
+        marker=dict(
+            color=row["color"],
+            line=dict(color="rgba(255,255,255,0.18)", width=1),
+            cornerradius=8
+        ),
+        text=f'{int(row["leads"]):,}  ·  {row["share"]:.2f}%',
+        textposition="outside",
+        textfont=dict(color="#EAF4FF", size=13, family="Manrope"),
+        cliponaxis=False,
+        hovertemplate=(
+            f'<b>{row["stage"]}</b><br>'
+            'Leads: %{x:,}<br>'
+            f'Share of all leads: {row["share"]:.2f}%<extra></extra>'
+        ),
+        showlegend=False
+    ))
+
 funnel_fig.update_layout(
-    template="plotly_dark", height=320, margin=dict(l=20, r=20, t=25, b=20),
-    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#dce9f8"), showlegend=False
+    template="plotly_dark",
+    height=350,
+    margin=dict(l=20, r=105, t=18, b=20),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#DCE9F8", family="Manrope"),
+    bargap=0.42,
+    showlegend=False,
+    xaxis=dict(
+        title="Number of Leads",
+        showgrid=True,
+        gridcolor="rgba(148,163,184,.14)",
+        zeroline=False,
+        range=[0, max(total_leads * 1.18, 1)]
+    ),
+    yaxis=dict(
+        title="",
+        autorange="reversed",
+        showgrid=False,
+        tickfont=dict(size=12, color="#DCE9F8")
+    ),
+    annotations=[
+        dict(
+            x=0.99, y=-0.23, xref="paper", yref="paper",
+            text="Closed Deals + Not Converted = Total Leads",
+            showarrow=False, xanchor="right",
+            font=dict(size=10, color="#91A9C2")
+        )
+    ]
 )
 st.plotly_chart(funnel_fig, use_container_width=True, config=CHART_CONFIG)
 
