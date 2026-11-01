@@ -94,7 +94,6 @@ mql["origin"] = (
     mql["origin"].fillna("Unknown").astype(str).str.strip().str.lower()
 )
 deals["business_segment"] = deals["business_segment"].fillna("Unknown").astype(str)
-deals["lead_type"] = deals["lead_type"].fillna("Unknown").astype(str)
 
 # Ensure numeric fields are usable in the scatter plot
 deals["declared_product_catalog_size"] = pd.to_numeric(
@@ -117,7 +116,6 @@ merged["conversion_status"] = np.where(
 # ------------------------------------------
 origin_options = sorted(mql["origin"].dropna().unique().tolist())
 segment_options = sorted(deals["business_segment"].dropna().unique().tolist())
-lead_type_options = sorted(deals["lead_type"].dropna().unique().tolist())
 
 valid_dates = mql["first_contact_date"].dropna()
 if not valid_dates.empty:
@@ -126,11 +124,11 @@ if not valid_dates.empty:
 else:
     min_date = max_date = pd.Timestamp.today().date()
 
-st.sidebar.markdown("## ◈ Dashboard Controls")
-st.sidebar.caption("Refine the data displayed across the dashboard.")
+st.sidebar.markdown("## Dashboard Filters")
+st.sidebar.caption("Refine your analysis using the controls below.")
 st.sidebar.markdown("---")
 
-st.sidebar.markdown("**LEAD SOURCE & DATE**")
+st.sidebar.markdown("**LEAD ACQUISITION**")
 selected_origins = st.sidebar.multiselect(
     "Marketing origin",
     options=origin_options,
@@ -147,21 +145,15 @@ selected_dates = st.sidebar.date_input(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("**CLOSED DEAL DETAILS**")
+st.sidebar.markdown("**CUSTOMER PROFILE**")
 selected_segments = st.sidebar.multiselect(
     "Business segment",
     options=segment_options,
     default=segment_options,
-    key="filter_segment"
+    key="filter_segment",
+    help="Applies to the closed-deal segment and revenue analysis."
 )
-selected_lead_types = st.sidebar.multiselect(
-    "Lead type",
-    options=lead_type_options,
-    default=lead_type_options,
-    key="filter_lead_type"
-)
-st.sidebar.markdown("---")
-st.sidebar.caption("Tip: Select multiple values to compare groups. Segment and lead type filters affect closed-deal charts only.")
+st.sidebar.caption("Choose one or more values. The dashboard updates automatically.")
 
 # Lead-level filters determine the funnel and overall KPIs.
 filtered_mql = mql[mql["origin"].isin(selected_origins)].copy()
@@ -182,7 +174,6 @@ filtered = merged[merged["mql_id"].isin(filtered_ids)].copy()
 filtered_deals = deals[
     deals["mql_id"].isin(filtered_ids)
     & deals["business_segment"].isin(selected_segments)
-    & deals["lead_type"].isin(selected_lead_types)
 ].copy()
 
 # ------------------------------------------
