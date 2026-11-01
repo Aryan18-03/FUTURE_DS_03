@@ -111,6 +111,13 @@ hr{border-color:rgba(148,163,184,.14)}
 </style>
 """, unsafe_allow_html=True)
 
+# Hide Plotly's in-chart toolbar so the charts look clean and uncluttered.
+CHART_CONFIG = {
+    "displayModeBar": False,
+    "displaylogo": False,
+    "scrollZoom": False
+}
+
 # ------------------------------------------
 # LOAD DATA
 # CSV files are stored in the repository root
@@ -330,7 +337,7 @@ funnel_fig.update_layout(
     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
     font=dict(color="#dce9f8"), showlegend=False
 )
-st.plotly_chart(funnel_fig, use_container_width=True)
+st.plotly_chart(funnel_fig, use_container_width=True, config=CHART_CONFIG)
 
 # ------------------------------------------
 # CHART 2: ORIGIN DISTRIBUTION
@@ -393,7 +400,7 @@ with left:
             )
         ]
     )
-    st.plotly_chart(donut_fig, use_container_width=True)
+    st.plotly_chart(donut_fig, use_container_width=True, config=CHART_CONFIG)
 
 # ------------------------------------------
 # CHART 3: MONTHLY LEAD GENERATION
@@ -418,7 +425,7 @@ with right:
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             xaxis=dict(showgrid=False), yaxis=dict(gridcolor="rgba(148,163,184,.15)")
         )
-        st.plotly_chart(monthly_fig, use_container_width=True)
+        st.plotly_chart(monthly_fig, use_container_width=True, config=CHART_CONFIG)
     else:
         st.info("No valid contact dates are available for this selection.")
 
@@ -447,7 +454,7 @@ with left:
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             coloraxis_showscale=False
         )
-        st.plotly_chart(segment_fig, use_container_width=True)
+        st.plotly_chart(segment_fig, use_container_width=True, config=CHART_CONFIG)
     else:
         st.info("No closed deals are available for the selected filters.")
 
@@ -482,7 +489,7 @@ with right:
             xaxis=dict(gridcolor="rgba(148,163,184,.12)"),
             yaxis=dict(gridcolor="rgba(148,163,184,.12)")
         )
-        st.plotly_chart(scatter_fig, use_container_width=True)
+        st.plotly_chart(scatter_fig, use_container_width=True, config=CHART_CONFIG)
         st.caption(f"Based on {len(scatter_data):,} closed deals with both values available. Revenue uses a log scale.")
     else:
         st.info("Not enough complete positive catalog and revenue values for this selection.")
@@ -526,7 +533,7 @@ conversion_fig.update_layout(
     xaxis=dict(ticksuffix="%", gridcolor="rgba(148,163,184,.15)"),
     yaxis=dict(title="")
 )
-st.plotly_chart(conversion_fig, use_container_width=True)
+st.plotly_chart(conversion_fig, use_container_width=True, config=CHART_CONFIG)
 
 # ------------------------------------------
 # KEY BUSINESS INSIGHTS
