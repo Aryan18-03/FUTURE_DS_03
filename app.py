@@ -614,46 +614,63 @@ with st.expander("View filtered data and dataset details"):
     )
 
 # ------------------------------------------
-# FINDINGS AND RECOMMENDATIONS
 # ------------------------------------------
-st.markdown('<div class="section-heading">Findings</div>', unsafe_allow_html=True)
+# PROJECT FINDINGS
+# ------------------------------------------
+st.markdown('<div class="section-heading">Project Findings</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="section-note">Evidence-led observations from the currently selected filters.</div>',
+    '<div class="section-note">What the Olist marketing funnel data shows for the current filter selection.</div>',
     unsafe_allow_html=True
 )
 
 finding_items = [
     (
-        "Overall conversion",
-        f"{converted_leads:,} out of {total_leads:,} selected leads converted "
-        f"({conversion_rate:.2f}%). The remaining {not_converted:,} leads "
-        f"({drop_off_rate:.2f}%) did not appear as closed deals in this dataset."
+        "Lead-to-deal conversion",
+        f"{converted_leads:,} of {total_leads:,} marketing-qualified leads are linked to closed deals "
+        f"({conversion_rate:.2f}% conversion). {not_converted:,} leads ({drop_off_rate:.2f}%) have no "
+        "matching closed-deal record in this dataset."
     )
 ]
 
 if not known_channels.empty:
+    best_rate = known_channels.loc[known_channels["conversion_rate"].idxmax()]
+    best_volume = known_channels.loc[known_channels["converted_leads"].idxmax()]
     finding_items.append((
-        "Channel performance",
+        "Channel quality vs. volume",
         f"{best_rate['origin'].replace('_', ' ').title()} has the highest conversion rate "
-        f"among identified channels ({best_rate['conversion_rate']:.2f}%). "
-        f"{best_volume['origin'].replace('_', ' ').title()} contributes the largest "
-        f"number of closed deals ({int(best_volume['converted_leads']):,})."
+        f"({best_rate['conversion_rate']:.2f}%), while "
+        f"{best_volume['origin'].replace('_', ' ').title()} produces the most closed deals "
+        f"({int(best_volume['converted_leads']):,}). The channel with the best rate is not necessarily "
+        "the channel generating the most deals."
     ))
+
+    for channel_name in ["social", "email"]:
+        channel_rows = known_channels[known_channels["origin"] == channel_name]
+        if not channel_rows.empty:
+            channel = channel_rows.iloc[0]
+            finding_items.append((
+                f"{channel_name.replace('_', ' ').title()} channel result",
+                f"{channel_name.replace('_', ' ').title()} records show a "
+                f"{channel['conversion_rate']:.2f}% conversion rate "
+                f"({int(channel['converted_leads']):,} closed deals from "
+                f"{int(channel['total_leads']):,} leads) in the current selection."
+            ))
 
 if not segment_counts.empty:
     leading_segment = segment_counts.iloc[0]
     finding_items.append((
-        "Closed-deal profile",
-        f"{str(leading_segment['business_segment']).replace('_', ' ').title()} is the "
-        f"largest segment among the selected closed deals, with "
-        f"{int(leading_segment['closed_deals']):,} deals."
+        "Business segment mix",
+        f"{str(leading_segment['business_segment']).replace('_', ' ').title()} accounts for the "
+        f"largest number of closed deals in the selected data "
+        f"({int(leading_segment['closed_deals']):,}). This describes the mix of closed deals, "
+        "not the segment conversion rate."
     ))
 
 if unknown_count:
     finding_items.append((
-        "Marketing attribution",
-        f"{unknown_count:,} selected leads have an unknown or missing marketing origin, "
-        "which limits the ability to attribute results to a specific channel."
+        "Lead-source attribution gap",
+        f"{unknown_count:,} selected leads have an unknown or missing origin. Their actual marketing "
+        "source cannot be identified reliably from the available records."
     ))
 
 for finding_title, finding_text in finding_items:
@@ -662,44 +679,72 @@ for finding_title, finding_text in finding_items:
         unsafe_allow_html=True
     )
 
+# ------------------------------------------
+# PROJECT-SPECIFIC RECOMMENDATIONS
+# ------------------------------------------
 st.markdown('<div class="section-heading">Recommendations</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="section-note">Practical next steps based on the findings above.</div>',
+    '<div class="section-note">Actions tied directly to the conversion, channel and segment results above.</div>',
     unsafe_allow_html=True
 )
 
-recommendation_items = [
-    (
-        "Improve lead nurturing",
-        "Review the follow-up journey for leads that have not converted. Test faster first responses, "
-        "scheduled follow-ups and clearer qualification steps.",
-        "Potential benefit: reduce lead drop-off and improve the share of leads progressing to a deal."
-    )
-]
+recommendation_items = []
 
 if not known_channels.empty:
-    recommendation_items.insert(0, (
-        "Optimize channel investment",
-        f"Run a controlled campaign test around {best_rate['origin'].replace('_', ' ').title()}, "
-        f"the strongest identified channel by conversion rate ({best_rate['conversion_rate']:.2f}%). "
-        f"Also study {best_volume['origin'].replace('_', ' ').title()} for its closed-deal volume.",
-        "Potential benefit: focus budget on channels with measurable conversion performance while validating results."
+    best_rate_name = best_rate["origin"].replace("_", " ").title()
+    best_volume_name = best_volume["origin"].replace("_", " ").title()
+    recommendation_items.append((
+        "Test the strongest converting channel",
+        f"Run a controlled budget or lead-generation test for {best_rate_name}, currently the highest "
+        f"converting identified channel at {best_rate['conversion_rate']:.2f}%. Increase investment "
+        "gradually and compare cost per qualified lead and closed-deal volume before scaling.",
+        "Business benefit: validate whether its stronger conversion rate can translate into more deals efficiently."
     ))
+    recommendation_items.append((
+        "Protect the channel driving deal volume",
+        f"Review the campaigns and landing pages behind {best_volume_name}, which contributes the most "
+        f"closed deals ({int(best_volume['converted_leads']):,}). Identify which messages and lead sources "
+        "are bringing in qualified prospects and retain the effective elements.",
+        "Business benefit: maintain the source of the largest current closed-deal contribution."
+    ))
+
+for channel_name in ["social", "email"]:
+    channel_rows = known_channels[known_channels["origin"] == channel_name] if not known_channels.empty else pd.DataFrame()
+    if not channel_rows.empty:
+        channel = channel_rows.iloc[0]
+        recommendation_items.append((
+            f"Review {channel_name.replace('_', ' ')} lead quality",
+            f"Audit targeting, campaign message and landing-page relevance for "
+            f"{channel_name.replace('_', ' ')}. Its current conversion rate is "
+            f"{channel['conversion_rate']:.2f}%; test changes on a small campaign before shifting budget.",
+            "Business benefit: identify whether low conversion is caused by targeting, offer or follow-up."
+        ))
 
 if unknown_count:
     recommendation_items.append((
-        "Strengthen source tracking",
-        "Use consistent UTM parameters and required source fields across landing pages and campaign forms. "
-        "Audit records with missing or unknown origins.",
-        "Potential benefit: improve attribution quality and make channel comparisons more reliable."
+        "Fix Olist lead-source attribution",
+        "Standardize the origin field and campaign tagging for landing-page and marketing leads. "
+        "Investigate why records are stored as unknown or missing, and monitor the unattributed share.",
+        "Business benefit: make channel-level conversion comparisons and future marketing allocation more dependable."
     ))
 
 recommendation_items.append((
-    "Monitor performance regularly",
-    "Track lead volume, closed deals, conversion rate and channel performance each month. "
-    "Compare results before and after campaign or follow-up changes.",
-    "Potential benefit: identify performance changes early and make decisions using evidence."
+    "Work on the MQL-to-closed-deal gap",
+    f"Review the lead hand-off and follow-up process for the {not_converted:,} selected leads without "
+    "a matching closed-deal record. Segment the review by origin and first-contact period, then track "
+    "response time and follow-up completion.",
+    "Business benefit: identify where qualified leads are being lost between marketing and sales."
 ))
+
+if not segment_counts.empty:
+    segment_name = str(leading_segment["business_segment"]).replace("_", " ").title()
+    recommendation_items.append((
+        "Study the leading business segment",
+        f"Compare the needs, lead sources and sales approach of businesses in {segment_name}, the largest "
+        "closed-deal segment in the current selection. Use the segment mix to guide further investigation, "
+        "not as proof of a higher conversion rate.",
+        "Business benefit: help tailor sales conversations to the customer segments already represented in closed deals."
+    ))
 
 for recommendation_title, recommendation_text, benefit_text in recommendation_items:
     st.markdown(
