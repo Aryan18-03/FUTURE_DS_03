@@ -24,107 +24,42 @@ st.set_page_config(
 # ------------------------------------------
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
-    }
-    .stApp {
-        background: linear-gradient(135deg, #07111f 0%, #0b1728 55%, #101d32 100%);
-        color: #edf4ff;
-    }
-    [data-testid="stSidebar"] {
-        background: #0a1423;
-        border-right: 1px solid rgba(148, 163, 184, 0.16);
-    }
-    [data-testid="stHeader"] {
-        background: rgba(7, 17, 31, 0.85);
-    }
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-        max-width: 1500px;
-    }
-    .hero {
-        padding: 26px 30px;
-        border-radius: 18px;
-        background: linear-gradient(110deg, rgba(24, 54, 91, .95), rgba(18, 35, 62, .95));
-        border: 1px solid rgba(96, 165, 250, .25);
-        margin-bottom: 22px;
-    }
-    .hero-kicker {
-        color: #8fc5ff;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-    }
-    .hero h1 {
-        color: #f8fbff;
-        font-size: 30px;
-        font-weight: 800;
-        margin: 0 0 8px 0;
-    }
-    .hero p {
-        color: #c3d3e8;
-        font-size: 14px;
-        margin: 0;
-    }
-    [data-testid="stMetric"] {
-        background: linear-gradient(145deg, #14243a, #101d30);
-        border: 1px solid rgba(120, 160, 210, .22);
-        padding: 17px 18px;
-        border-radius: 14px;
-        min-height: 112px;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #a9bfd9 !important;
-        font-size: 13px !important;
-    }
-    [data-testid="stMetricValue"] {
-        color: #f5f9ff !important;
-        font-weight: 800 !important;
-    }
-    .section-heading {
-        color: #f0f6ff;
-        font-size: 19px;
-        font-weight: 700;
-        margin: 18px 0 10px 0;
-    }
-    .section-note {
-        color: #9fb2ca;
-        font-size: 12px;
-        margin-top: -5px;
-        margin-bottom: 12px;
-    }
-    div[data-testid="stPlotlyChart"] {
-        background: #101e31;
-        border: 1px solid rgba(120, 160, 210, .18);
-        border-radius: 14px;
-        padding: 8px;
-    }
-    div[data-testid="stDataFrame"] {
-        border: 1px solid rgba(120, 160, 210, .18);
-        border-radius: 12px;
-    }
-    .insight {
-        background: #11243a;
-        border-left: 3px solid #42a5f5;
-        border-radius: 8px;
-        padding: 12px 15px;
-        margin: 8px 0;
-        color: #d8e6f7;
-        font-size: 13px;
-    }
-    .footer {
-        color: #8298b3;
-        font-size: 11px;
-        text-align: center;
-        padding-top: 25px;
-    }
-    h2, h3 { color: #f0f6ff !important; }
-    label, p, span { color: inherit; }
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+:root { color-scheme: dark; }
+html, body, [class*="css"] { font-family:'Manrope',sans-serif; }
+.stApp {
+ background:radial-gradient(ellipse at 12% 0%,rgba(20,184,166,.16),transparent 34%),
+ radial-gradient(ellipse at 88% 8%,rgba(139,92,246,.19),transparent 32%),
+ linear-gradient(145deg,#050914 0%,#0a1020 48%,#0b1426 100%); color:#eef4ff;
+}
+[data-testid="stHeader"]{background:rgba(5,9,20,.72)}
+[data-testid="stSidebar"]{background:linear-gradient(180deg,#080f1d,#0d1729);border-right:1px solid rgba(148,163,184,.14)}
+[data-testid="stSidebar"] *{color:#d9e6f7}
+.main .block-container{max-width:1500px;padding:2rem 2.5rem 3rem}
+.hero{position:relative;overflow:hidden;padding:36px 40px;border-radius:24px;
+ background:linear-gradient(115deg,rgba(13,148,136,.24),rgba(30,64,175,.25) 48%,rgba(109,40,217,.27)),linear-gradient(135deg,#111d33,#10182b);
+ border:1px solid rgba(125,211,252,.28);box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);margin-bottom:28px}
+.hero:after{content:"";position:absolute;width:250px;height:250px;border-radius:50%;right:-70px;top:-130px;background:rgba(45,212,191,.16);filter:blur(8px)}
+.hero-kicker{color:#5eead4;font-size:11px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;margin-bottom:12px}
+.hero h1{color:#f8fbff;font-size:clamp(27px,3vw,39px);line-height:1.15;font-weight:800;margin:0 0 11px;letter-spacing:-1.2px}
+.hero p{color:#b8c9df;font-size:14px;margin:0;max-width:760px}
+.section-heading{color:#f3f7ff;font-size:19px;font-weight:800;margin:25px 0 10px;letter-spacing:-.3px}
+.section-note{color:#91a5c0;font-size:12px;margin-top:-4px;margin-bottom:14px}
+.kpi-card{position:relative;overflow:hidden;min-height:132px;padding:19px 20px 17px;border-radius:18px;
+ background:linear-gradient(145deg,rgba(23,38,62,.98),rgba(12,22,39,.98));border:1px solid rgba(148,163,184,.2);box-shadow:0 12px 30px rgba(0,0,0,.23)}
+.kpi-card:after{content:"";position:absolute;height:3px;left:0;right:0;top:0;background:var(--accent)}
+.kpi-top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#a8bbd3;font-size:11px;font-weight:800;letter-spacing:.5px}
+.kpi-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.07);color:var(--accent);font-size:18px}
+.kpi-value{color:#f8fbff;font-size:30px;font-weight:800;letter-spacing:-.8px;margin-top:12px;line-height:1.1}
+.kpi-foot{color:#8196b2;font-size:11px;margin-top:7px}
+div[data-testid="stPlotlyChart"]{background:linear-gradient(145deg,rgba(18,31,52,.94),rgba(11,20,36,.98));border:1px solid rgba(148,163,184,.17);border-radius:18px;padding:10px 10px 4px;box-shadow:0 12px 28px rgba(0,0,0,.2)}
+div[data-testid="stDataFrame"]{border:1px solid rgba(148,163,184,.16);border-radius:14px}
+.insight{background:linear-gradient(100deg,rgba(20,184,166,.12),rgba(30,64,175,.12));border:1px solid rgba(94,234,212,.18);border-left:3px solid #2dd4bf;border-radius:12px;padding:14px 17px;margin:10px 0;color:#dce9f8;font-size:13px}
+.footer{color:#7186a2;font-size:11px;text-align:center;padding-top:30px}
+h2,h3{color:#f3f7ff!important}
+.stCaption,[data-testid="stCaptionContainer"]{color:#91a5c0!important}
+hr{border-color:rgba(148,163,184,.14)}
+@media(max-width:800px){.main .block-container{padding:1rem}.hero{padding:24px 22px}.kpi-value{font-size:24px}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -243,11 +178,22 @@ st.markdown("""
 # KPI CARDS
 # ------------------------------------------
 st.markdown('<div class="section-heading">Executive Overview</div>', unsafe_allow_html=True)
-k1, k2, k3, k4 = st.columns(4)
-k1.metric("Total Marketing Leads", f"{total_leads:,}")
-k2.metric("Closed Deals", f"{converted_leads:,}")
-k3.metric("Conversion Rate", f"{conversion_rate:.2f}%")
-k4.metric("Lead Drop-off", f"{drop_off_rate:.2f}%")
+kpi_columns = st.columns(4)
+kpi_items = [
+    ("TOTAL MARKETING LEADS", f"{total_leads:,}", "♙", "All qualified leads in selection", "#38bdf8"),
+    ("CLOSED DEALS", f"{converted_leads:,}", "✦", "Leads that became customers", "#2dd4bf"),
+    ("CONVERSION RATE", f"{conversion_rate:.2f}%", "↗", "Share of leads converted", "#a78bfa"),
+    ("LEAD DROP-OFF", f"{drop_off_rate:.2f}%", "◌", "Share not yet converted", "#fb7185")
+]
+for column, (label, value, symbol, foot, accent) in zip(kpi_columns, kpi_items):
+    with column:
+        st.markdown(
+            f'<div class="kpi-card" style="--accent:{accent}">'
+            f'<div class="kpi-top"><span>{label}</span><span class="kpi-icon">{symbol}</span></div>'
+            f'<div class="kpi-value">{value}</div>'
+            f'<div class="kpi-foot">{foot}</div></div>',
+            unsafe_allow_html=True
+        )
 
 st.markdown(
     '<div class="section-note">Metrics update automatically when you change the filters.</div>',
