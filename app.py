@@ -32,11 +32,11 @@ st.set_page_config(
 def load_data():
 
     mql = pd.read_csv(
-        "data/olist_marketing_qualified_leads_dataset.csv"
+        "olist_marketing_qualified_leads_dataset.csv"
     )
 
     deals = pd.read_csv(
-        "data/olist_closed_deals_dataset.csv"
+        "olist_closed_deals_dataset.csv"
     )
 
     return mql, deals
