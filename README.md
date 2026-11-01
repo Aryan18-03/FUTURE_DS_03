@@ -165,7 +165,7 @@ These are descriptive results from the available records. A lead without a match
 Aspiring Data Analyst | Python | SQL | Excel | Power BI | Tableau
 
 - [GitHub](https://github.com/Aryan18-03)
-- [LinkedIn](https://linkedin.com/in/aryan-data-analyst)
+- [LinkedIn](https://www.linkedin.com/in/aryan-data-analyst183/)
 
 ---
 
