@@ -124,6 +124,17 @@ merged["conversion_status"] = np.where(
 )
 
 # ------------------------------------------
+# HEADER
+# ------------------------------------------
+st.markdown("""
+<div class="hero">
+    <div class="hero-kicker">Future Interns · Data Analytics · Task 03</div>
+    <h1>Marketing Funnel & Conversion Performance</h1>
+    <p>Explore lead acquisition, conversion outcomes and the business profile of closed deals through an interactive view of the Olist marketing funnel.</p>\n    <div class="hero-tag">INTERACTIVE ANALYTICS · LEAD ACQUISITION · CONVERSION INSIGHTS</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ------------------------------------------
 # PROFESSIONAL DASHBOARD FILTERS
 # ------------------------------------------
 origin_options = sorted(mql["origin"].dropna().unique().tolist())
@@ -210,17 +221,6 @@ if selected_lead_type != "All":
     filtered_deals = filtered_deals[filtered_deals["lead_type"] == selected_lead_type]
 if selected_business_type != "All":
     filtered_deals = filtered_deals[filtered_deals["business_type"] == selected_business_type]
-
-# ------------------------------------------
-# HEADER
-# ------------------------------------------
-st.markdown("""
-<div class="hero">
-    <div class="hero-kicker">Future Interns · Data Analytics · Task 03</div>
-    <h1>Marketing Funnel & Conversion Performance</h1>
-    <p>Explore lead acquisition, conversion outcomes and the business profile of closed deals through an interactive view of the Olist marketing funnel.</p>\n    <div class="hero-tag">INTERACTIVE ANALYTICS · LEAD ACQUISITION · CONVERSION INSIGHTS</div>
-</div>
-""", unsafe_allow_html=True)
 
 # ------------------------------------------
 # KPI CALCULATIONS
