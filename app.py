@@ -350,10 +350,10 @@ drop_off_rate = not_converted / total_leads * 100 if total_leads else 0
 st.markdown('<div class="section-heading">Executive Overview</div>', unsafe_allow_html=True)
 kpi_columns = st.columns(4)
 kpi_items = [
-    ("TOTAL MARKETING LEADS", f"{total_leads:,}", "♙", "All qualified leads in selection", "#38bdf8"),
-    ("CLOSED DEALS", f"{converted_leads:,}", "✦", "Leads that became customers", "#2dd4bf"),
-    ("CONVERSION RATE", f"{conversion_rate:.2f}%", "↗", "Share of leads converted", "#a78bfa"),
-    ("LEAD DROP-OFF", f"{drop_off_rate:.2f}%", "◌", "Share not yet converted", "#fb7185")
+    ("TOTAL MARKETING LEADS", f"{total_leads:,}", "♙", "All qualified leads in selection", "#36E4F5"),
+    ("CLOSED DEALS", f"{converted_leads:,}", "✦", "Leads that became customers", "#4DE2B1"),
+    ("CONVERSION RATE", f"{conversion_rate:.2f}%", "↗", "Share of leads converted", "#A78BFA"),
+    ("LEAD DROP-OFF", f"{drop_off_rate:.2f}%", "◌", "Share not yet converted", "#FF6B81")
 ]
 for column, (label, value, symbol, foot, accent) in zip(kpi_columns, kpi_items):
     with column:
