@@ -100,7 +100,28 @@ hr{border-color:rgba(148,163,184,.14)}
 }
 [data-testid="stSidebar"] [data-testid="stButton"] { margin: 8px 0 2px; }
 [data-testid="stSidebar"] hr { margin: 12px 0 16px; border-color: rgba(148,163,184,.16); }
-[data-testid="stPlotlyChart"] iframe { border-radius: 14px; }
+/* Keep each Plotly chart viewport clean: prevent embedded chart overflow and hide its scrollbars. */
+[data-testid="stPlotlyChart"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+[data-testid="stPlotlyChart"] iframe {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 14px;
+    overflow: hidden !important;
+    scrollbar-width: none !important;
+}
+[data-testid="stPlotlyChart"] iframe::-webkit-scrollbar,
+[data-testid="stPlotlyChart"]::-webkit-scrollbar,
+[data-testid="stPlotlyChart"] *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
 [data-testid="stMarkdownContainer"] p { line-height: 1.65; }
 [data-testid="stExpander"] {
     border: 1px solid rgba(125,211,252,.18);
@@ -115,7 +136,8 @@ hr{border-color:rgba(148,163,184,.14)}
 CHART_CONFIG = {
     "displayModeBar": False,
     "displaylogo": False,
-    "scrollZoom": False
+    "scrollZoom": False,
+    "responsive": True
 }
 
 # ------------------------------------------
