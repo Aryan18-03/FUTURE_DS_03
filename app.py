@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="Marketing Funnel Dashboard",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # ------------------------------------------
@@ -59,6 +59,8 @@ div[data-testid="stDataFrame"]{border:1px solid rgba(148,163,184,.16);border-rad
 h2,h3{color:#f3f7ff!important}
 .stCaption,[data-testid="stCaptionContainer"]{color:#91a5c0!important}
 hr{border-color:rgba(148,163,184,.14)}
+[data-testid="stVerticalBlockBorderWrapper"]{background:linear-gradient(145deg,rgba(18,31,52,.92),rgba(10,19,34,.96));border:1px solid rgba(94,234,212,.22)!important;border-radius:18px;padding:16px 18px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
+[data-testid="stSelectbox"],[data-testid="stMultiSelect"],[data-testid="stDateInput"]{background:rgba(255,255,255,.025);border-radius:10px}
 @media(max-width:800px){.main .block-container{padding:1rem}.hero{padding:24px 22px}.kpi-value{font-size:24px}}
 </style>
 """, unsafe_allow_html=True)
@@ -92,6 +94,7 @@ mql["origin"] = (
     mql["origin"].fillna("Unknown").astype(str).str.strip().str.lower()
 )
 deals["business_segment"] = deals["business_segment"].fillna("Unknown").astype(str)
+deals["lead_type"] = deals["lead_type"].fillna("Unknown").astype(str)
 
 # Ensure numeric fields are usable in the scatter plot
 deals["declared_product_catalog_size"] = pd.to_numeric(
@@ -110,33 +113,52 @@ merged["conversion_status"] = np.where(
 )
 
 # ------------------------------------------
-# SIDEBAR FILTERS
+# VISIBLE DASHBOARD FILTER BAR
 # ------------------------------------------
-st.sidebar.markdown("## 🎛️ Dashboard Filters")
-st.sidebar.caption("Filter the dashboard by lead source and contact date.")
-
 origin_options = sorted(mql["origin"].dropna().unique().tolist())
-selected_origins = st.sidebar.multiselect(
-    "Marketing origin",
-    options=origin_options,
-    default=origin_options,
-    format_func=lambda x: "Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title()
-)
+segment_options = sorted(deals["business_segment"].dropna().unique().tolist())
+lead_type_options = sorted(deals["lead_type"].dropna().unique().tolist())
 
 valid_dates = mql["first_contact_date"].dropna()
 if not valid_dates.empty:
     min_date = valid_dates.min().date()
     max_date = valid_dates.max().date()
-    selected_dates = st.sidebar.date_input(
-        "First contact date range",
-        value=(min_date, max_date),
-        min_value=min_date,
-        max_value=max_date
-    )
 else:
-    selected_dates = ()
+    min_date = max_date = pd.Timestamp.today().date()
 
-# Handle both a selected date range and a single selected date
+st.markdown('<div class="section-heading">Explore the data</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-note">Use the filters below to focus the dashboard. Segment and lead type apply to closed-deal charts.</div>', unsafe_allow_html=True)
+
+with st.container(border=True):
+    filter_cols = st.columns([1.15, 1.55, 1.15, 1.15])
+    with filter_cols[0]:
+        selected_origins = st.multiselect(
+            "Marketing origin",
+            options=origin_options,
+            default=origin_options,
+            format_func=lambda x: "Unknown / Unattributed" if x == "unknown" else x.replace("_", " ").title()
+        )
+    with filter_cols[1]:
+        selected_dates = st.date_input(
+            "First contact date",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date
+        )
+    with filter_cols[2]:
+        selected_segments = st.multiselect(
+            "Business segment",
+            options=segment_options,
+            default=segment_options
+        )
+    with filter_cols[3]:
+        selected_lead_types = st.multiselect(
+            "Lead type",
+            options=lead_type_options,
+            default=lead_type_options
+        )
+
+# Lead-level filters determine the funnel and overall KPIs.
 filtered_mql = mql[mql["origin"].isin(selected_origins)].copy()
 if isinstance(selected_dates, (tuple, list)) and len(selected_dates) == 2:
     start_date, end_date = selected_dates
@@ -150,7 +172,13 @@ elif isinstance(selected_dates, (tuple, list)) and len(selected_dates) == 1:
 
 filtered_ids = filtered_mql["mql_id"].dropna().unique()
 filtered = merged[merged["mql_id"].isin(filtered_ids)].copy()
-filtered_deals = deals[deals["mql_id"].isin(filtered_ids)].copy()
+
+# Deal-level filters affect only charts based on closed-deal attributes.
+filtered_deals = deals[
+    deals["mql_id"].isin(filtered_ids)
+    & deals["business_segment"].isin(selected_segments)
+    & deals["lead_type"].isin(selected_lead_types)
+].copy()
 
 # ------------------------------------------
 # KPI CALCULATIONS
