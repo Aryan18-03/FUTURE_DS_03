@@ -375,77 +375,47 @@ if total_leads == 0:
     st.stop()
 
 # ------------------------------------------
-# CHART 1: LEAD FUNNEL & OUTCOME
+# CHART 1: TRUE LEAD CONVERSION FUNNEL
 # ------------------------------------------
-st.markdown('<div class="section-heading">1. Lead Conversion Funnel & Outcome</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-heading">1. Lead Conversion Funnel</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="section-note">The first bar shows all marketing-qualified leads. The next two bars split those leads into the two recorded outcomes: closed deals and leads without a matching closed-deal record.</div>',
+    '<div class="section-note">A true tapered funnel from marketing-qualified leads to closed deals. The conversion and drop-off figures are shown alongside the funnel so the two outcomes are not misrepresented as sequential stages.</div>',
     unsafe_allow_html=True
 )
 
-funnel_data = pd.DataFrame({
-    "stage": ["Total Marketing Qualified Leads", "Closed Deals", "Not Converted"],
-    "leads": [total_leads, converted_leads, not_converted],
-    "share": [
-        100.0,
-        converted_leads / total_leads * 100 if total_leads else 0,
-        not_converted / total_leads * 100 if total_leads else 0
-    ],
-    "color": ["#4D8DFF", "#4DE2B1", "#FF6B81"]
-})
-
-funnel_fig = go.Figure()
-for _, row in funnel_data.iterrows():
-    funnel_fig.add_trace(go.Bar(
-        x=[row["leads"]],
-        y=[row["stage"]],
-        orientation="h",
-        name=row["stage"],
-        marker=dict(
-            color=row["color"],
-            line=dict(color="rgba(255,255,255,0.18)", width=1),
-            cornerradius=8
-        ),
-        text=f'{int(row["leads"]):,}  ·  {row["share"]:.2f}%',
-        textposition="outside",
-        textfont=dict(color="#EAF4FF", size=13, family="Manrope"),
-        cliponaxis=False,
-        hovertemplate=(
-            f'<b>{row["stage"]}</b><br>'
-            'Leads: %{x:,}<br>'
-            f'Share of all leads: {row["share"]:.2f}%<extra></extra>'
-        ),
-        showlegend=False
-    ))
+funnel_fig = go.Figure(go.Funnel(
+    y=["Marketing Qualified Leads", "Closed Deals"],
+    x=[total_leads, converted_leads],
+    text=[f"{total_leads:,}<br>100% of leads",
+          f"{converted_leads:,}<br>{conversion_rate:.2f}% conversion"],
+    texttemplate="%{text}",
+    textposition="inside",
+    textfont=dict(size=15, color="#FFFFFF", family="Manrope"),
+    marker=dict(
+        color=["#4D8DFF", "#36E4F5"],
+        line=dict(color="rgba(255,255,255,0.24)", width=1)
+    ),
+    connector=dict(line=dict(color="rgba(145,169,194,0.45)", width=1.5)),
+    opacity=0.96,
+    hovertemplate="<b>%{y}</b><br>Leads: %{x:,}<extra></extra>"
+))
 
 funnel_fig.update_layout(
     template="plotly_dark",
-    height=350,
-    margin=dict(l=20, r=105, t=18, b=20),
+    height=390,
+    margin=dict(l=25, r=25, t=25, b=25),
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     font=dict(color="#DCE9F8", family="Manrope"),
-    bargap=0.42,
     showlegend=False,
-    xaxis=dict(
-        title="Number of Leads",
-        showgrid=True,
-        gridcolor="rgba(148,163,184,.14)",
-        zeroline=False,
-        range=[0, max(total_leads * 1.18, 1)]
-    ),
-    yaxis=dict(
-        title="",
-        autorange="reversed",
-        showgrid=False,
-        tickfont=dict(size=12, color="#DCE9F8")
-    ),
+    funnelmode="stack",
+    uniformtext=dict(minsize=11, mode="hide"),
     annotations=[
         dict(
-            x=0.99, y=-0.23, xref="paper", yref="paper",
-            text="Closed Deals + Not Converted = Total Leads",
-            showarrow=False, xanchor="right",
-            font=dict(size=10, color="#91A9C2")
+            x=0.5, y=-0.08, xref="paper", yref="paper",
+            text=f"Not converted: {not_converted:,} leads ({drop_off_rate:.2f}%)",
+            showarrow=False, xanchor="center",
+            font=dict(size=12, color="#FF9AA9", family="Manrope")
         )
     ]
 )
