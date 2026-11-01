@@ -77,6 +77,32 @@ h2,h3{color:#f3f7ff!important}
 hr{border-color:rgba(148,163,184,.14)}
 [data-testid="stVerticalBlockBorderWrapper"]{background:linear-gradient(145deg,rgba(18,31,52,.92),rgba(10,19,34,.96));border:1px solid rgba(94,234,212,.22)!important;border-radius:18px;padding:16px 18px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
 [data-testid="stSelectbox"],[data-testid="stMultiSelect"],[data-testid="stDateInput"]{background:rgba(255,255,255,.025);border-radius:10px}
+/* Refined dashboard controls and visual hierarchy */
+.stButton > button {
+    border: 1px solid rgba(94,234,212,.38);
+    border-radius: 11px;
+    color: #99f6e4;
+    background: linear-gradient(110deg,rgba(20,184,166,.13),rgba(59,130,246,.12));
+    font-weight: 800;
+    letter-spacing: .2px;
+    min-height: 42px;
+    transition: all .18s ease;
+}
+.stButton > button:hover {
+    border-color: rgba(94,234,212,.75);
+    color: #ecfeff;
+    background: linear-gradient(110deg,rgba(20,184,166,.25),rgba(59,130,246,.22));
+    transform: translateY(-1px);
+}
+[data-testid="stSidebar"] [data-testid="stButton"] { margin: 8px 0 2px; }
+[data-testid="stSidebar"] hr { margin: 12px 0 16px; border-color: rgba(148,163,184,.16); }
+[data-testid="stPlotlyChart"] iframe { border-radius: 14px; }
+[data-testid="stMarkdownContainer"] p { line-height: 1.65; }
+[data-testid="stExpander"] {
+    border: 1px solid rgba(125,211,252,.18);
+    border-radius: 14px;
+    background: rgba(15,27,46,.72);
+}
 @media(max-width:800px){.main .block-container{padding:1rem}.hero{padding:24px 22px}.kpi-value{font-size:24px}}
 </style>
 """, unsafe_allow_html=True)
@@ -155,8 +181,24 @@ if not valid_dates.empty:
 else:
     min_date = max_date = pd.Timestamp.today().date()
 
+def reset_filters():
+    """Restore every sidebar filter to its original all-data selection."""
+    st.session_state["filter_origin"] = "All"
+    st.session_state["filter_contact_date"] = (min_date, max_date)
+    st.session_state["filter_segment"] = "All"
+    st.session_state["filter_lead_type"] = "All"
+    st.session_state["filter_business_type"] = "All"
+
+
 st.sidebar.markdown("## Dashboard Filters")
 st.sidebar.caption("Refine the dashboard using the options below.")
+st.sidebar.button(
+    "↺  Reset all filters",
+    use_container_width=True,
+    type="secondary",
+    on_click=reset_filters,
+    help="Clear every selection and restore the full dataset."
+)
 st.sidebar.markdown("---")
 
 st.sidebar.markdown("**LEAD ACQUISITION**")
